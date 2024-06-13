@@ -1,0 +1,107 @@
+.home-page{
+    /*background-color: rgb(235, 235, 235);
+    padding: 10px;
+    /*
+    border-radius: 12px;
+    box-shadow: 0 0 3px rgb(10, 1, 1);
+*/
+    .pagination{
+        display: flex;
+        justify-content: flex-end;
+        align-items: center;
+        gap: 10px;
+        font-size: 12px;
+
+        .info{
+            display: flex;
+            align-items: center;
+            gap:5px;
+
+            span:not(:last-of-type) {
+                color :rgb(56, 55, 55);
+            };
+            
+            span:last-of-type{
+                font-weight: bold;
+            }
+            
+        }
+
+        .arrows{
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }        
+    }
+
+    .messages{
+        margin-top: 20px;
+        font-size: small;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        padding-left: 60px;
+        padding-right: 40px;
+        
+        .message{
+            display: flex;
+            align-items: center;
+            justify-content: space-between; 
+            padding: 13px 30px;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            box-shadow: 0 0 2px 0 rgb(56, 55, 55);
+            transition: all 0.2s ease-in-out;
+
+            &:hover{
+                background-color: #eee;
+            }
+
+            .employee{
+                font-weight: bold;
+                color: #383737;
+            }
+
+            .customer{
+                display: flex;
+                align-items: center;
+                gap: 16px;
+
+                p:first-of-type{
+                    font-weight:600;
+                }
+
+                .audio-text{
+                    direction: rtl;
+                    width: 280px;
+                    white-space: nowrap ;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    text-align: center;
+                }
+            }
+
+            .controls{
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                & > p{
+                   color: gray; 
+                   font-size: 14px;
+                }
+
+                .icons{
+                    display: flex;
+                    align-items: center;
+                    gap: 10px;
+                    input{
+                        accent-color: green ;
+                        
+                    }
+                }
+            }
+        }
+
+    }
+
+}

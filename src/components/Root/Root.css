@@ -1,0 +1,23 @@
+.root-layout{
+   /* background-color: red;*/
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+   /* padding: 10px;*/
+}
+
+main{
+  flex:1; 
+  display: flex;
+  gap: 20px;
+  padding-inline: 15px;
+
+}
+  
+main .outlet{
+    flex: 1;
+    &>*{
+      height: 100%;
+    }
+}

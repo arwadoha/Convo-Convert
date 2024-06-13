@@ -1,0 +1,18 @@
+footer{
+    min-height: 60px;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #f8f6f6;
+    font-size: smaller;
+    .logo{
+        display: flex;
+        align-items: center;
+        gap:10px;
+        font-size:12px;
+        img{
+            width: 25px;
+        }
+    }
+}
