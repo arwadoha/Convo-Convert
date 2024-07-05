@@ -13,6 +13,7 @@ import { IoMdAdd } from "react-icons/io";
 import { useClickOutSide } from '../../hooks/useClickOutSide';
 import { IoPricetags } from "react-icons/io5";
 import Modal from "../../components/Modal/Modal.jsx"
+import EditKeywordModal from '../../components/EditKeywordModal/EditKeywordModal.jsx';
 import { GrStatusUnknown } from "react-icons/gr";
 
 const MessageDetails = () => {  
@@ -31,7 +32,7 @@ const MessageDetails = () => {
      "New connection Setup"
      ,"Al-Irsal"
      ,"Ramallah"
-     /*
+     
      ,"Keyword 4"
      ,"Keyword 5"
      ,"Keyword 6"
@@ -39,7 +40,7 @@ const MessageDetails = () => {
      ,"Keyword 8"
      ,"Keyword 9"
      ,"Keyword 10"
-     */
+     
   ];
 
   //new 
@@ -48,6 +49,8 @@ const MessageDetails = () => {
       setIsDropdownVisible(!isDropdownVisible);
   };
   //
+  const [openEditModal, setOpenEditModal] = useState(false);
+  
 
   function formSubmit(e){
     e.preventDefault();
@@ -107,6 +110,7 @@ const MessageDetails = () => {
                   <span>Add New</span>
                 </button>
           </div>
+           
           <div className="wrapper">
                   {keywords.map((keyword,index)=>(
                       <Keyword key={index} keyword={keyword} /> 
@@ -174,6 +178,25 @@ const MessageDetails = () => {
               
            </form>
        </Modal>
+         
+       <EditKeywordModal open={openEditModal} setOpen={setOpenEditModal} title='Edit Keyword'>
+        <form className='form_addKeyword' onSubmit={formSubmit}>
+               <label htmlFor="keyword">
+                    <span> Keyword </span> 
+                    <input 
+                        type="text" 
+                        name='keyword' 
+                        value={keyword}
+                        onChange={e=> setKeyword(e.target.value)}
+                    /> 
+               </label>
+               <div className="form_buttons">
+                   <button type='submit'>Add</button>
+                   <button type='button' onClick={()=> setOpenModal(false)}>Cancel</button>
+               </div>
+              
+           </form>
+       </EditKeywordModal>
 
     </div>
   )
@@ -194,10 +217,11 @@ const Keyword=({keyword})=>{
 
         {openOptions == true?(
           <ul className="options"> 
-              <li>
+              <li onClick={()=> setOpenEditModal(true)}>
                    <MdEdit />
                    <span>Edit</span>
               </li>
+              
               <li>
                    <MdDeleteOutline />
                    <span>Delete</span>

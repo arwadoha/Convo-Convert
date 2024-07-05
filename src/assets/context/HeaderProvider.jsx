@@ -4,7 +4,6 @@ export const HeaderContext= createContext(null);
 
 const HeaderProvider = ({children}) => {
 
-
     const [open,setOpen] = useState(false);
 
   return (
