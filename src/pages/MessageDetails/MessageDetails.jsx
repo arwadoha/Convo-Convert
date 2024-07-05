@@ -13,18 +13,25 @@ import { IoMdAdd } from "react-icons/io";
 import { useClickOutSide } from '../../hooks/useClickOutSide';
 import { IoPricetags } from "react-icons/io5";
 import Modal from "../../components/Modal/Modal.jsx"
+import { GrStatusUnknown } from "react-icons/gr";
 
 const MessageDetails = () => {  
   const  {messageid}= useParams();
   const [openModal, setOpenModal] = useState(false);
   const [keyword, setKeyword] = useState("");
-
+  const [openStatus,setOpenStatus]=useState(false);
+  //const lableRef =useClickOutSide( ()=>setOpenStatus(false));
+  const labelRef = useClickOutSide(() => {
+    setOpenStatus(false);
+    setIsDropdownVisible(false); // Close both status and dropdown when clicking outside
+  });
   const message =fackMessages.find((msg)=> msg.id==Number(messageid));
   
   const keywords=[
-     "Keyword 1"
-     ,"Keyword 2"
-     ,"Keyword 3"
+     "New connection Setup"
+     ,"Al-Irsal"
+     ,"Ramallah"
+     /*
      ,"Keyword 4"
      ,"Keyword 5"
      ,"Keyword 6"
@@ -32,8 +39,15 @@ const MessageDetails = () => {
      ,"Keyword 8"
      ,"Keyword 9"
      ,"Keyword 10"
-     
+     */
   ];
+
+  //new 
+  const [isDropdownVisible, setIsDropdownVisible] = useState(false);
+  const toggleDropdown = () => {
+      setIsDropdownVisible(!isDropdownVisible);
+  };
+  //
 
   function formSubmit(e){
     e.preventDefault();
@@ -101,13 +115,44 @@ const MessageDetails = () => {
           </div>
 
        </div>
-       <div className='tages'>
-          
-                <h3>
-                      <IoPricetags   size={20} color='#1796a7'/> Tages
-                </h3>
-                <div className='tages-text'> 
+
+      <div className='status'>
+            <h3>
+                <GrStatusUnknown size={20} color='gray'/> Status
+            </h3>
+            <div className='status_menu' ref={labelRef}>
+                <div className="status_targger" onClick={toggleDropdown}>
+                    <p>Choose...</p>
+                     
                 </div>
+
+                {isDropdownVisible && (
+                    <div className='status_content'>
+                        <p data-active={message.status === 'solved'}>Solved</p>
+                        <p data-active={message.status === 'notsolved'}>Not Solved</p>
+                    </div>
+                )}
+            </div>
+        </div>
+
+       <div className='ner-tags'>
+          
+            <h3>
+                <IoPricetags size={20} color='#1796a7'/> Tags
+            </h3>
+            <div className='tags'> 
+               <div className='tags_wrapper'>
+                  { [].map((tag)=>(
+                      <div className='tag' key={tag}>
+                          {tag}
+                      </div>
+                  ))}
+               </div>
+               <div className='tags_options'>
+                    <div className="option"> Add New Tag</div>
+                    <div className="option"> Clear All</div>
+               </div>
+            </div>
           
        </div>
 

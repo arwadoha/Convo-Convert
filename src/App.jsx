@@ -3,6 +3,7 @@ import Home from "./pages/Home/Home";
 import MessageDetails from "./pages/MessageDetails/MessageDetails"
 import AdvanceSearch from "./pages/AdvanceSearch/AdvanceSearch"
 import Root from "./components/Root/Root"
+import HeaderProvider from './assets/context/HeaderProvider';
 function App() {
     const router = createBrowserRouter([  
       {
@@ -18,17 +19,18 @@ function App() {
             path:"/message-details/:messageid",
             element: <MessageDetails/>, 
           },
-          {
-            path: "/advance-search",
-            element: <AdvanceSearch/> 
-          }
+
         ]
       }
 
 
     ]);
 
-  return <RouterProvider router={router} />;
+  return (
+    <HeaderProvider>
+       <RouterProvider router={router} />
+    </HeaderProvider>
+  );
   
 }
 

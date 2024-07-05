@@ -5,33 +5,105 @@
     border-radius: 12px;
     box-shadow: 0 0 3px rgb(10, 1, 1);
 */
-    .pagination{
+    
+    .top-section{
         display: flex;
-        justify-content: flex-end;
         align-items: center;
+        justify-content: space-between;
+
         gap: 10px;
         font-size: 12px;
-
-        .info{
-            display: flex;
-            align-items: center;
-            gap:5px;
-
-            span:not(:last-of-type) {
-                color :rgb(56, 55, 55);
-            };
-            
-            span:last-of-type{
-                font-weight: bold;
-            }
-            
+        &:has(.addvance-search[data-show=false]){
+            justify-content: flex-end;
         }
 
-        .arrows{
+        .pagination{
             display: flex;
-            gap: 8px;
             align-items: center;
-        }        
+            gap:1rem;
+
+            .info{
+                display: flex;
+                align-items: center;
+                gap:5px;
+    
+                span:not(:last-of-type) {
+                    color :rgb(56, 55, 55);
+                };
+                
+                span:last-of-type{
+                    font-weight: bold;
+                } 
+            }
+    
+            .arrows{
+                display: flex;
+                gap: 8px;
+                align-items: center;
+            } 
+        }
+
+        .addvance-search{
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+
+            justify-self: center;
+            margin-inline: auto;
+
+            &[data-show=false]{
+                display: none;
+            }
+
+            .trigger{
+                padding: 0.5rem 1rem;
+                border: 1px solid #ddd;
+                border-radius: 100px;
+                cursor: pointer;
+                transition: all 0.3s;
+                user-select: none;
+                &:hover{
+                    background-color: #fcfafa;
+                }
+            
+            }
+            ul{
+                position: absolute;
+                top:110%;
+                left:0;
+                width:220px;
+                background-color: white;
+                box-shadow: 1px 3px 5px 1px rgba(0,0,0,0.2);
+                border-radius: 0.7rem;
+                li{
+                    font-size: 14px;
+                    padding: 0.7rem 1.2rem;
+                    cursor: pointer;
+                    transition: all 0.3s;
+                    &:not(:last-of-type){
+                        border-bottom: 1px solid #eee;
+                    }
+                    &:hover{
+                        background-color: #eeeeee98;
+                    }
+                    &:has(input){
+                        padding: 0;
+                        input{
+                            padding: 1rem;
+                            border: none;
+                            width: 100%;
+                        }
+                    }
+
+                }
+            }
+            .date,
+            .employee,
+            .customer {
+                position: relative;
+
+            }
+        }
     }
 
     .messages{

@@ -1,9 +1,11 @@
 header{
-    height: 70px;
+    height: 80px;
     position: sticky;
     top: 0px;
-    background-color: white;
-
+    z-index: 50;
+    background-color: #fff;
+    box-shadow: 0 3px 5px reg(0,0,0.0.1);
+    
     .header-wrapper{
         display: flex; 
         justify-content: space-between;
@@ -30,7 +32,8 @@ header{
      .search{
         display: flex;
         align-items: center;
-        margin-top: 10px;
+        margin-top: 5px;
+        margin-bottom: 20px;
 
         .serch-wrapper{
             width: 450px;
@@ -61,6 +64,16 @@ header{
                     &::placeholder{
                         color: rgb(14, 13, 13);
                     }
+                }
+
+            }
+            svg{
+                cursor: pointer;
+                &:last-of-type:hover{
+                    fill:black
+                }
+                &:last-of-type[data-actve="true"]{
+                    fill:rgb(27, 4, 128);
                 }
             }
         
