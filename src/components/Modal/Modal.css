@@ -1,56 +1,52 @@
-.modal_overlay{
+.modal_overlay {
     position: fixed;
     inset: 0;
-    z-index: 50;
-    background-color: rgba(0, 0, 0, 0.5) ;
-    backdrop-filter:blur(1.5px);
+    z-index: 9999999;
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(1.5px);
     display: flex;
     justify-content: center;
     align-items: center;
 
-    .modal_content{
+    .modal_content {
         background-color: white;
-        width: min(400px,70%);
+        width: min(400px, 70%);
 
         border-radius: 0.5rem;
-        box-shadow: 0 3px 4px rgb(0, 0, 0 ,0.5);
+        box-shadow: 0 3px 4px rgb(0, 0, 0, 0.5);
 
-        .model_title{
+        .model_title {
             display: flex;
             align-items: center;
             justify-content: space-between;
             padding: 1rem;
             border-bottom: 1px solid #ddd;
-           
-            .close{
 
+            .close {
                 cursor: pointer;
                 width: 30px;
                 height: 30px;
                 display: flex;
-                top:10px;
+                top: 10px;
                 right: 10px;
                 align-items: center;
                 justify-content: center;
                 border: 1px solid #ddd;
                 border-radius: 50%;
                 font-size: 22px;
-                transition: all .2s linear;
-                &:hover{
+                transition: all 0.2s linear;
+                &:hover {
                     background-color: rgb(250, 95, 95);
                     color: white;
                 }
-    
             }
-            h2{
+            h2 {
                 font-size: 16px;
             }
-
         }
 
-        .modal_body{
+        .modal_body {
             padding: 1rem;
         }
-        
     }
 }

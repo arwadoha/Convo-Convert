@@ -2,7 +2,7 @@ header{
     height: 80px;
     position: sticky;
     top: 0px;
-    z-index: 50;
+    z-index: 40;
     background-color: #fff;
     box-shadow: 0 3px 5px reg(0,0,0.0.1);
     

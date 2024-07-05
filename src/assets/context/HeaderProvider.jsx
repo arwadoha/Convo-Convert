@@ -1,22 +1,20 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useState } from "react";
 
-export const HeaderContext= createContext(null);
+export const HeaderContext = createContext(null);
 
-const HeaderProvider = ({children}) => {
+const HeaderProvider = ({ children }) => {
+    const [open, setOpen] = useState(false);
 
-    const [open,setOpen] = useState(false);
-
-  return (
+    return (
         <HeaderContext.Provider
             value={{
                 open,
                 setOpen,
-
-                }}>
-        
-            {children }
+            }}
+        >
+            {children}
         </HeaderContext.Provider>
-  );
+    );
 };
 
-export default HeaderProvider
+export default HeaderProvider;
