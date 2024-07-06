@@ -56,10 +56,19 @@
             cursor: pointer;
             color: rgb(68, 68, 68);
             transition: all 0.2s;
-            &:hover {
+            user-select: none;
+            &:hover, &.active {
                 color: black;
                 font-weight: bold;
                 gap: 13px;
+            }
+            &.clear {
+                background-color: rgb(189, 189, 189);
+                padding: 0.5rem 1rem;
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                border-radius: 0.5rem;
             }
         }
     }

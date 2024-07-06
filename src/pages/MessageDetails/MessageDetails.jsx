@@ -3,7 +3,6 @@ import { useParams } from "react-router-dom";
 import "./MessageDetails.css";
 import "../../components/Modal/Modal.jsx";
 import { IoPersonCircle } from "react-icons/io5";
-import { fackMessages } from "../Home/Home";
 import { FaStar, FaRegStar, FaKey } from "react-icons/fa";
 import { IoIosCall } from "react-icons/io";
 import { MdOutlineKeyboardArrowUp } from "react-icons/md";
@@ -25,7 +24,7 @@ const MessageDetails = () => {
         setOpenStatus(false);
         setIsDropdownVisible(false); // Close both status and dropdown when clicking outside
     });
-    const message = fackMessages.find((msg) => msg.id == Number(messageid));
+    const message = [].find((msg) => msg.id == Number(messageid));
 
     const keywords = [
         "New connection Setup",

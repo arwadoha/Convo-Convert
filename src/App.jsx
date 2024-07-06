@@ -5,32 +5,35 @@ import AdvanceSearch from "./pages/AdvanceSearch/AdvanceSearch";
 import Root from "./components/Root/Root";
 import HeaderProvider from "./assets/context/HeaderProvider";
 import { Toaster } from "sonner";
+import GlobalProvider from "./assets/context/GlobalProvider";
 
 function App() {
-    const router = createBrowserRouter([
+  const router = createBrowserRouter([
+    {
+      path: "/",
+      element: <Root />,
+
+      children: [
         {
-            path: "/",
-            element: <Root />,
-
-            children: [
-                {
-                    index: true,
-                    element: <Home />,
-                },
-                {
-                    path: "/message-details/:messageid",
-                    element: <MessageDetails />,
-                },
-            ],
+          index: true,
+          element: <Home />,
         },
-    ]);
+        {
+          path: "/message-details/:messageid",
+          element: <MessageDetails />,
+        },
+      ],
+    },
+  ]);
 
-    return (
-        <HeaderProvider>
-            <Toaster position="top-center" richColors />
-            <RouterProvider router={router} />
-        </HeaderProvider>
-    );
+  return (
+    <GlobalProvider>
+      <HeaderProvider>
+        <Toaster position="top-center" richColors />
+        <RouterProvider router={router} />
+      </HeaderProvider>
+    </GlobalProvider>
+  );
 }
 
 export default App;
