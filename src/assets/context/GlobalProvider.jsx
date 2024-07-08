@@ -24,6 +24,10 @@ const GlobalProvider = ({ children }) => {
         setFilter,
         currentPage,
         setCurrentPage,
+
+        //new
+        search, // Provide search state
+        setSearch, // Provide setSearch function
       }}
     >
       {children}

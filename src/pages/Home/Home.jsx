@@ -15,7 +15,9 @@ import { useGlobal } from "../../assets/context/GlobalProvider";
 const Home = () => {
   const Navigate = useNavigate();
   const { filter } = useGlobal();
-  const { currentPage, setCurrentPage } = useGlobal()
+
+  //const { currentPage, setCurrentPage } = useGlobal();
+  const { currentPage, setCurrentPage, search } = useGlobal();
 
   const { open: openAdvanceSearch } = useHeader();
 
@@ -53,6 +55,12 @@ const Home = () => {
     return <h1>Loading...</h1>;
   }
 
+  // new
+    const filteredCalls = calls.filter(call =>
+      call.audioText.toLowerCase().includes(search.query.toLowerCase())
+    );
+  //
+
   function filterArray(arr) {
     return arr.filter((call) => {
       if (filter.status && filter.starred != null) {
@@ -71,12 +79,12 @@ const Home = () => {
 
   const initialPoint = CALL_PER_PAGE * (currentPage - 1);
 
-  const calls_with_pagination_and_filter = calls.slice(
+  const calls_with_pagination_and_filter = filteredCalls.slice(
     initialPoint,
     CALL_PER_PAGE * currentPage
   );
 
-  const pagesCount = Math.ceil(calls.length / CALL_PER_PAGE);
+  const pagesCount = Math.ceil(filteredCalls.length / CALL_PER_PAGE);
 
   function previous() {
     setCurrentPage((prev) => prev - 1);
