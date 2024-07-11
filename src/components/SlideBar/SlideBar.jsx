@@ -8,6 +8,8 @@ import { toast } from "sonner";
 import { CiStar } from "react-icons/ci";
 import { useGlobal } from "../../assets/context/GlobalProvider.jsx";
 import { GrClearOption } from "react-icons/gr";
+import { useMutation } from "@tanstack/react-query";
+import axios from "axios";
 
 const SlideBar = () => {
   const [showUploadModal, setShowUploadModal] = useState(false);
@@ -27,7 +29,7 @@ const SlideBar = () => {
         [name]: value,
       };
     });
-    setCurrentPage(1)
+    setCurrentPage(1);
   }
 
   return (
@@ -95,6 +97,8 @@ function UploadModal({ open, setOpen }) {
     customerNumber: "",
     employeeName: "",
     audioFile: null,
+    date: new Date(),
+    keywords: "",
   });
 
   function handleChange(event) {
@@ -116,12 +120,41 @@ function UploadModal({ open, setOpen }) {
     });
   }
 
+  const uploadCallMutation = useMutation({
+    mutationFn: async ({ fileFormData, paramsData }) => {
+      const { data } = await axios.post(
+        `http://localhost:8080/upload`,
+        fileFormData,
+        {
+          params: paramsData,
+        }
+      );
+      return data;
+    },
+    onSuccess() {
+      toast.success("Uploaded Successfully!");
+    },
+  });
+
   function handleSubmit(e) {
     e.preventDefault();
     if (!inputs.audioFile.type.startsWith("audio")) {
       toast.error("Not an audio file, please upload an audio file");
     }
-    // TODO: send the request
+    const fileFormData = new FormData();
+    fileFormData.append("file", inputs.audioFile);
+
+    const paramsData = {
+      customerName: inputs.customerName,
+      customerNumber: inputs.customerNumber,
+      employeeName: inputs.employeeName,
+      date: inputs.date,
+      started: false,
+      status: "notsolved",
+      keywords: inputs.keywords,
+    };
+
+    uploadCallMutation.mutate({ fileFormData, paramsData });
   }
 
   return (
@@ -146,12 +179,44 @@ function UploadModal({ open, setOpen }) {
             name="employeeName"
             required
           />
+          <InputBox
+            handleChange={(e) => {
+              const value = new Date(e.target.value);
+              setInputs((prev) => {
+                return {
+                  ...prev,
+                  date: value,
+                };
+              });
+            }}
+            label="Date"
+            name="date"
+            type="date"
+            required
+          />
+          <InputBox
+            handleChange={handleChange}
+            label="Keywords"
+            name="keywords"
+            required
+          />
+
+          {/* <label>
+            Status:
+            <select name="status" onChange={handleChange} required>
+              <option value="solved">Solved</option>
+              <option value="not_solved">Not Solved</option>
+            </select>
+          </label> */}
+
           <label>
             <p className="upload_btn">Upload Audio File</p>
             <input type="file" onChange={handleFileChange} accept="audio/*" />
           </label>
 
-          <button type="submit">Submit</button>
+          <button type="submit">
+            {uploadCallMutation.isPending ? "Loading..." : "Upload"}
+          </button>
         </form>
       </div>
     </Modal>

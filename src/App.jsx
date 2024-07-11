@@ -19,7 +19,7 @@ function App() {
           element: <Home />,
         },
         {
-          path: "/message-details/:messageid",
+          path: "/message-details/:messageId",
           element: <MessageDetails />,
         },
       ],

@@ -43,13 +43,17 @@ const Home = () => {
     }));
   }
 
-  const { data: calls, isLoading } = useQuery({
+  const { data: calls, isLoading, error } = useQuery({
     queryKey: ["get-calls"],
     queryFn: async () => {
       const response = await axios.get("http://localhost:8080/Calls");
       return response.data;
     },
   });
+
+  if (error) {
+    return <h1>{error.response.data.message || "Something went wrong!"}</h1>;
+  }
 
   if (isLoading) {
     return <h1>Loading...</h1>;
