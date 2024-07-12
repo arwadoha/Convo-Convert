@@ -13,6 +13,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useGlobal } from "../../assets/context/GlobalProvider";
 import moment from "moment";
 import { GiClawSlashes } from "react-icons/gi";
+import { BiCheck } from "react-icons/bi";
 
 const Home = () => {
   const { filter, currentPage, setCurrentPage, search, setSearch } =
@@ -43,16 +44,16 @@ const Home = () => {
   }
 
   const [calls, setCalls] = useState([]);
-  const [filterCalls, setFilterCalls] = useState([]);
   const [callsLoading, setCallsLoading] = useState(true);
   const [customerNames, setCustomerNames] = useState([]);
   const [employeeNames, setEmployeeNames] = useState([]);
+  const [employeeInput, setEmplyeeInput] = useState("");
+  const [customerInput, setCustomerInput] = useState("");
   async function getCalls() {
     try {
       const { data, status } = await axios.get("http://localhost:8080/Calls");
       if (status == 200) {
-        setCalls(data);
-        setFilterCalls(data);
+        setCalls([...data]);
         setCustomerNames([...new Set(data.map((call) => call.customerName))]);
         setEmployeeNames([...new Set(data.map((call) => call.employeeName))]);
       }
@@ -63,20 +64,6 @@ const Home = () => {
     }
   }
 
-  function filterArray(arr) {
-    return arr.filter((call) => {
-      if (filter.status && filter.starred != null) {
-        return call.status == filter.status && call.started == filter.starred;
-      } else if (filter.status && filter.starred == null) {
-        return call.status == filter.status;
-      } else if (filter.status == "" && filter.starred != null) {
-        return call.started == filter.starred;
-      } else {
-        return call;
-      }
-    });
-  }
-
   function previous() {
     setCurrentPage((prev) => prev - 1);
   }
@@ -84,20 +71,57 @@ const Home = () => {
     setCurrentPage((prev) => prev + 1);
   }
 
-  const filteredCalls = calls.filter((call) =>
-    call.audioText.toLowerCase().includes(search.query.toLowerCase())
-  );
-
   const CALL_PER_PAGE = 10;
+  function globalFiltering(arr) {
+    return arr
+      .slice((currentPage - 1) * CALL_PER_PAGE, CALL_PER_PAGE * currentPage)
+      .filter((c) => {
+        const lowerCustomerName = search.customer.toLowerCase();
+        const lowerEmployeeName = search.employee?.toLowerCase();
+        const lowerQuery = search.query?.toLowerCase();
+        let dateCondition;
+        const callDate = new Date(c.date).toDateString();
+        const today = new Date().toDateString();
+        const weekAgo = new Date(
+          Date.now() - 7 * 24 * 60 * 60 * 1000
+        ).toDateString();
+        const monthAgo = new Date(
+          Date.now() - 30 * 24 * 60 * 60 * 1000
+        ).toDateString();
+        const yearAgo = new Date(
+          Date.now() - 365 * 24 * 60 * 60 * 1000
+        ).toDateString();
+        switch (search.date) {
+          case "Today":
+            dateCondition = callDate == today;
+            break;
+          case "Last Week":
+            dateCondition = callDate >= weekAgo;
+            break;
+          case "Last Month":
+            dateCondition = callDate >= monthAgo;
+            break;
+          case "Last Year":
+            dateCondition = callDate >= yearAgo;
+            break;
+          default:
+            dateCondition = true;
+            break;
+        }
+        return (
+          (!search.query || c.audioText.toLowerCase().includes(lowerQuery)) &&
+          (filter.starred == null || c.started == filter.starred) &&
+          (filter.status == "" || c.status == filter.status) &&
+          (!search.customer ||
+            c.customerName.toLowerCase().includes(lowerCustomerName)) &&
+          (!search.employee ||
+            c.employeeName.toLowerCase().includes(lowerEmployeeName)) &&
+          dateCondition
+        );
+      });
+  }
+  const pagesCount = Math.ceil(globalFiltering(calls).length / CALL_PER_PAGE);
 
-  const initialPoint = CALL_PER_PAGE * (currentPage - 1);
-
-  const calls_with_pagination_and_filter = filteredCalls.slice(
-    initialPoint,
-    CALL_PER_PAGE * currentPage
-  );
-
-  const pagesCount = Math.ceil(filteredCalls.length / CALL_PER_PAGE);
   const dateOptions = [
     "Today",
     "Last Week",
@@ -105,6 +129,7 @@ const Home = () => {
     "Last Year",
     // "Custom Range",
   ];
+
   useEffect(() => {
     getCalls();
   }, []);
@@ -118,6 +143,18 @@ const Home = () => {
       <div className="top-section">
         <div className="addvance-search" data-show={openAdvanceSearch}>
           <p>Advance Search</p>
+          <button
+            onClick={() => {
+              setSearch({
+                date: "",
+                query: "",
+                customer: "",
+                employee: "",
+              });
+            }}
+          >
+            Clear
+          </button>
           <div className="date">
             <div className="trigger" onClick={() => handleOpenOption("date")}>
               Date
@@ -135,6 +172,7 @@ const Home = () => {
                       handleOpenOption("date");
                     }}
                   >
+                    {search.date == option && <BiCheck color="green" />}
                     {option}
                   </li>
                 ))}
@@ -155,23 +193,25 @@ const Home = () => {
                   <input
                     type="text"
                     placeholder="Search employee by name"
-                    onChange={({ target: { value } }) => {
-                      setSearch((prev) => ({
-                        ...prev,
-                        employee: value,
-                      }));
-                    }}
+                    onChange={(e) => setEmplyeeInput(e.target.value)}
                   />
                 </li>
                 {employeeNames
-                  ?.filter((em) => em.toLowerCase().includes(search.employee))
+                  ?.filter((em) =>
+                    em.toLowerCase().includes(employeeInput.toLowerCase())
+                  )
                   ?.map((e) => (
                     <li
                       key={e}
                       onClick={() => {
                         handleOpenOption("employee");
+                        setSearch((prev) => ({
+                          ...prev,
+                          employee: e,
+                        }));
                       }}
                     >
+                      {search.employee == e && <BiCheck color="green" />}
                       {e}
                     </li>
                   ))}
@@ -192,25 +232,25 @@ const Home = () => {
                   <input
                     type="text"
                     placeholder="Search customer by name"
-                    onChange={({ target: { value } }) => {
-                      setSearch((prev) => ({
-                        ...prev,
-                        customer: value,
-                      }));
-                    }}
+                    onChange={(e) => setCustomerInput(e.target.value)}
                   />
                 </li>
                 {customerNames
                   ?.filter((cu) =>
-                    cu.toLowerCase().includes(search.customer || "")
+                    cu.toLowerCase().includes(customerInput.toLowerCase())
                   )
                   ?.map((c) => (
                     <li
                       key={c}
                       onClick={() => {
+                        setSearch((prev) => ({
+                          ...prev,
+                          customer: c,
+                        }));
                         handleOpenOption("customer");
                       }}
                     >
+                      {search.customer == c && <BiCheck color="green" />}
                       {c}
                     </li>
                   ))}
@@ -236,8 +276,8 @@ const Home = () => {
       </div>
 
       <div className="messages">
-        {filterCalls.length ? (
-          filterCalls.map((call) => {
+        {globalFiltering(calls).length ? (
+          globalFiltering(calls).map((call) => {
             return (
               <div key={call.id} className="message">
                 <Link to={`/message-details/${call.id}`} className="employee">

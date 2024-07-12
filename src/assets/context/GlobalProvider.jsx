@@ -14,7 +14,7 @@ const GlobalProvider = ({ children }) => {
     query: "",
     date: "",
     employee: "",
-    custoemr: "",
+    customer: "",
   });
 
   return (
