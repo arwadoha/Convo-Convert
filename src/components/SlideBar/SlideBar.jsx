@@ -179,6 +179,13 @@ function UploadModal({ open, setOpen }) {
             name="employeeName"
             required
           />
+         <InputBox
+            handleChange={handleChange}
+            label="Date"
+            name="date"
+            required
+          />
+{/*
           <InputBox
             handleChange={(e) => {
               const value = new Date(e.target.value);
@@ -194,6 +201,7 @@ function UploadModal({ open, setOpen }) {
             type="date"
             required
           />
+*/}
           <InputBox
             handleChange={handleChange}
             label="Keywords"
