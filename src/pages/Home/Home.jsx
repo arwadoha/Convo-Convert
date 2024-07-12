@@ -11,13 +11,12 @@ import axios from "axios";
 import { toast } from "sonner";
 import { useQuery } from "@tanstack/react-query";
 import { useGlobal } from "../../assets/context/GlobalProvider";
+import moment from "moment";
+import { GiClawSlashes } from "react-icons/gi";
 
 const Home = () => {
-  const Navigate = useNavigate();
-  const { filter } = useGlobal();
-
-  //const { currentPage, setCurrentPage } = useGlobal();
-  const { currentPage, setCurrentPage, search } = useGlobal();
+  const { filter, currentPage, setCurrentPage, search, setSearch } =
+    useGlobal();
 
   const { open: openAdvanceSearch } = useHeader();
 
@@ -43,27 +42,26 @@ const Home = () => {
     }));
   }
 
-  const { data: calls, isLoading, error } = useQuery({
-    queryKey: ["get-calls"],
-    queryFn: async () => {
-      const response = await axios.get("http://localhost:8080/Calls");
-      return response.data;
-    },
-  });
-
-  if (error) {
-    return <h1>{error.response.data.message || "Something went wrong!"}</h1>;
+  const [calls, setCalls] = useState([]);
+  const [filterCalls, setFilterCalls] = useState([]);
+  const [callsLoading, setCallsLoading] = useState(true);
+  const [customerNames, setCustomerNames] = useState([]);
+  const [employeeNames, setEmployeeNames] = useState([]);
+  async function getCalls() {
+    try {
+      const { data, status } = await axios.get("http://localhost:8080/Calls");
+      if (status == 200) {
+        setCalls(data);
+        setFilterCalls(data);
+        setCustomerNames([...new Set(data.map((call) => call.customerName))]);
+        setEmployeeNames([...new Set(data.map((call) => call.employeeName))]);
+      }
+    } catch (error) {
+      toast.error(error.message || "Something went wrong!!");
+    } finally {
+      setCallsLoading(false);
+    }
   }
-
-  if (isLoading) {
-    return <h1>Loading...</h1>;
-  }
-
-  // new
-    const filteredCalls = calls.filter(call =>
-      call.audioText.toLowerCase().includes(search.query.toLowerCase())
-    );
-  //
 
   function filterArray(arr) {
     return arr.filter((call) => {
@@ -79,6 +77,17 @@ const Home = () => {
     });
   }
 
+  function previous() {
+    setCurrentPage((prev) => prev - 1);
+  }
+  function next() {
+    setCurrentPage((prev) => prev + 1);
+  }
+
+  const filteredCalls = calls.filter((call) =>
+    call.audioText.toLowerCase().includes(search.query.toLowerCase())
+  );
+
   const CALL_PER_PAGE = 10;
 
   const initialPoint = CALL_PER_PAGE * (currentPage - 1);
@@ -89,12 +98,19 @@ const Home = () => {
   );
 
   const pagesCount = Math.ceil(filteredCalls.length / CALL_PER_PAGE);
+  const dateOptions = [
+    "Today",
+    "Last Week",
+    "Last Month",
+    "Last Year",
+    // "Custom Range",
+  ];
+  useEffect(() => {
+    getCalls();
+  }, []);
 
-  function previous() {
-    setCurrentPage((prev) => prev - 1);
-  }
-  function next() {
-    setCurrentPage((prev) => prev + 1);
+  if (callsLoading) {
+    return <div>Loading...</div>;
   }
 
   return (
@@ -108,11 +124,20 @@ const Home = () => {
             </div>
             {open.date && (
               <ul>
-                <li>Today</li>
-                <li>Last Week</li>
-                <li>Last Month</li>
-                <li>Last Year</li>
-                <li>Custom Range</li>
+                {dateOptions.map((option) => (
+                  <li
+                    key={option}
+                    onClick={() => {
+                      setSearch((prev) => ({
+                        ...prev,
+                        date: option,
+                      }));
+                      handleOpenOption("date");
+                    }}
+                  >
+                    {option}
+                  </li>
+                ))}
               </ul>
             )}
           </div>
@@ -127,13 +152,29 @@ const Home = () => {
             {open.employee && (
               <ul>
                 <li className="employee-search">
-                  <input type="text" placeholder="Search employee by name" />
+                  <input
+                    type="text"
+                    placeholder="Search employee by name"
+                    onChange={({ target: { value } }) => {
+                      setSearch((prev) => ({
+                        ...prev,
+                        employee: value,
+                      }));
+                    }}
+                  />
                 </li>
-                <li>Today</li>
-                <li>Last Week</li>
-                <li>Last Month</li>
-                <li>Last Year</li>
-                <li>Custom Range</li>
+                {employeeNames
+                  ?.filter((em) => em.toLowerCase().includes(search.employee))
+                  ?.map((e) => (
+                    <li
+                      key={e}
+                      onClick={() => {
+                        handleOpenOption("employee");
+                      }}
+                    >
+                      {e}
+                    </li>
+                  ))}
               </ul>
             )}
           </div>
@@ -148,13 +189,31 @@ const Home = () => {
             {open.customer && (
               <ul>
                 <li className="customer-search">
-                  <input type="text" placeholder="Search customer by name" />
+                  <input
+                    type="text"
+                    placeholder="Search customer by name"
+                    onChange={({ target: { value } }) => {
+                      setSearch((prev) => ({
+                        ...prev,
+                        customer: value,
+                      }));
+                    }}
+                  />
                 </li>
-                <li>Today</li>
-                <li>Last Week</li>
-                <li>Last Month</li>
-                <li>Last Year</li>
-                <li>Custom Range</li>
+                {customerNames
+                  ?.filter((cu) =>
+                    cu.toLowerCase().includes(search.customer || "")
+                  )
+                  ?.map((c) => (
+                    <li
+                      key={c}
+                      onClick={() => {
+                        handleOpenOption("customer");
+                      }}
+                    >
+                      {c}
+                    </li>
+                  ))}
               </ul>
             )}
           </div>
@@ -177,8 +236,8 @@ const Home = () => {
       </div>
 
       <div className="messages">
-        {filterArray(calls_with_pagination_and_filter).length > 0 ? (
-          filterArray(calls_with_pagination_and_filter).map((call) => {
+        {filterCalls.length ? (
+          filterCalls.map((call) => {
             return (
               <div key={call.id} className="message">
                 <Link to={`/message-details/${call.id}`} className="employee">
@@ -193,7 +252,8 @@ const Home = () => {
                 </Link>
 
                 <div className="controls">
-                  <p>{new Date(call.date).toLocaleString()}</p>
+                  <p>{moment(call.date).format("MMM, DD YYYY")}</p>
+
                   <div className="icons">
                     {call.started ? <FaStar color="orange" /> : <FaRegStar />}
 

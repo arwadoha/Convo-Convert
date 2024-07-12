@@ -14,8 +14,8 @@ const GlobalProvider = ({ children }) => {
     query: "",
     date: "",
     employee: "",
-    custoemr: ""
-  })
+    custoemr: "",
+  });
 
   return (
     <GlobalContext.Provider
